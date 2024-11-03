@@ -31,11 +31,8 @@ jobs:
             --reporters cli,html \
             --reporter-html-export e2e-tests/api-tests/newman/newman-report.html
 
-      - name: Verify report file location
-        run: ls -la e2e-tests/api-tests/newman
-
       - name: Upload Newman Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: newman-reports
           path: e2e-tests/api-tests/newman/*.html
