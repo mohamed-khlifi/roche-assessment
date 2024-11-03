@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "ad83fdb2-46c0-4c8e-bd15-cbc3ad469fcf",
+		"name": "Employees",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27233797"
+	},
+	"item": [
+		{
+			"name": "Get Employees Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Verify response status is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify response is in JSON format\", () => {\r",
+							"    pm.response.to.be.json;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify response contains a 'record' array\", () => {\r",
+							"    pm.expect(jsonData).to.have.property('record').that.is.an('array');\r",
+							"});\r",
+							"\r",
+							"if (jsonData.record.length > 0) {\r",
+							"    validateEmployees(jsonData.record);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Verify 'record' array is not empty\", () => {\r",
+							"    pm.expect(jsonData.record.length).to.be.greaterThan(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify 'EmployeeID' values are unique\", () => {\r",
+							"    const employeeIds = jsonData.record.map(employee => employee.EmployeeID);\r",
+							"    const uniqueIds = new Set(employeeIds);\r",
+							"    pm.expect(uniqueIds.size).to.equal(employeeIds.length);\r",
+							"});\r",
+							"\r",
+							"const validCountries = [\"USA\", \"UK\"];\r",
+							"jsonData.record.forEach((employee, index) => {\r",
+							"    pm.test(`Verify 'Country' for employee at index ${index} is valid`, () => {\r",
+							"        pm.expect(validCountries).to.include(employee.Country);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ReportsTo attribute matches a valid EmployeeID\", () => {\r",
+							"    const employeeIds = jsonData.record.map(employee => employee.EmployeeID);\r",
+							"    jsonData.record.forEach(employee => {\r",
+							"        if (employee.ReportsTo !== null) {\r",
+							"            pm.expect(employeeIds).to.include(employee.ReportsTo);\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"function validateEmployees(employees) {\r",
+							"    employees.forEach((employee, index) => {\r",
+							"        pm.test(`Verify employee object at index ${index} has the correct attributes`, () => {\r",
+							"            pm.expect(employee).to.have.all.keys(\r",
+							"                'EmployeeID', 'FirstName', 'LastName', 'ReportsTo', \r",
+							"                'Country', 'Title', 'HireDate', 'BirthDate', 'City', 'Address'\r",
+							"            );\r",
+							"\r",
+							"            pm.expect(employee.EmployeeID).to.be.a('number');\r",
+							"            pm.expect(employee.FirstName).to.be.a('string').and.to.not.be.empty;\r",
+							"            pm.expect(employee.LastName).to.be.a('string').and.to.not.be.empty;\r",
+							"            pm.expect(employee.ReportsTo).to.satisfy(val => typeof val === 'number' || val === null);\r",
+							"            pm.expect(employee.Country).to.be.a('string');\r",
+							"            pm.expect(employee.Title).to.be.a('string');\r",
+							"            pm.expect(employee.HireDate).to.match(/^\\d{4}-\\d{2}-\\d{2}/);\r",
+							"            pm.expect(employee.BirthDate).to.match(/^\\d{4}-\\d{2}-\\d{2}/);\r",
+							"            pm.expect(employee.City).to.satisfy(value => typeof value === 'string' || value === null);\r",
+							"            pm.expect(employee.Address).to.be.a('string');\r",
+							"        });\r",
+							"    });\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.jsonbin.io/v3/b/6725fa4facd3cb34a8a13905",
+					"protocol": "https",
+					"host": [
+						"api",
+						"jsonbin",
+						"io"
+					],
+					"path": [
+						"v3",
+						"b",
+						"6725fa4facd3cb34a8a13905"
+					]
+				},
+				"description": "### API Request Description\n\nThis API endpoint makes an HTTP GET request to retrieve data from the specified URL `https://api.jsonbin.io/v3/b/6725fa4facd3cb34a8a13905`.\n\n### Request Body\n\nThis is a GET request and does not contain a request body.\n\n### Response Body\n\nThe response is in JSON format with a status code of 200. It includes a `record` array containing employee information such as `EmployeeID`, `FirstName`, `LastName`, `ReportsTo`, `Country`, `Title`, `HireDate`, `BirthDate`, `City`, and `Address`. Additionally, the response includes a `metadata` object with `id`, `private`, and `createdAt` fields."
+			},
+			"response": []
+		}
+	]
+}
